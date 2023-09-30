@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int            @id @default(autoincrement())
+  name      String
+  username  String
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  isActive  Boolean        @default(true)
+  profile   Profile?
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+  stories   Story[]
+  followers Relationship[] @relation(name: "followers")
+  following Relationship[] @relation(name: "followed")
+}
+
+model Profile {
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  user    User    @relation(fields: [userId], references: [id])
+  avatar  String?
+  cover   String?
+  city    String
+  website String?
+}
+
+model Post {
+  id           Int       @id @default(autoincrement())
+  disc         String
+  image        String?
+  postAutherId Int
+  auther       User      @relation(fields: [postAutherId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedUt    DateTime  @updatedAt
+  comments     Comment[]
+  Likes        Like[]
+}
+
+model Comment {
+  id              Int    @id @default(autoincrement())
+  disc            String
+  postId          Int
+  post            Post   @relation(fields: [postId], references: [id])
+  commentAutherId Int
+  auther          User   @relation(fields: [commentAutherId], references: [id])
+}
+
+model Like {
+  id           Int  @id @default(autoincrement())
+  postId       Int
+  post         Post @relation(fields: [postId], references: [id])
+  likeUserId   Int
+  likeUser     User @relation(fields: [likeUserId], references: [id])
+}
+
+model Story {
+  id     Int    @id @default(autoincrement())
+  image  String
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Relationship {
+  id             Int  @id @default(autoincrement())
+  followedUserId Int
+  followersIds   Int
+  followedUser   User @relation(name: "followed", fields: [followedUserId], references: [id])
+  followers      User @relation(name: "followers", fields: [followersIds], references: [id])
+}
