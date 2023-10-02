@@ -6,6 +6,15 @@ export interface loginBody {
   password: string;
 };
 
+export interface signupBody extends loginBody {
+  name: string,
+  username: string,
+  avatar?: string,
+  cover?: string,
+  city: string,
+  website?: string
+}
+
 export interface decoded {
   id: number
   role?: string,
@@ -13,5 +22,5 @@ export interface decoded {
 }
 
 export interface AuthorizationRequest extends Request {
-  user: User
+  user?: User
 }

@@ -15,11 +15,14 @@ import {
   updateSpecificUserValidator,
 } from "./user.validator";
 
-import { isAuthorized } from './../../shared/middlewares/authorization';
+import { protect } from "../../shared/middlewares/protection";
+import { allowTo } from "../../shared/middlewares/user.permissions";
 
 const router = Router();
 
-router.route("/").post(createNewUserValidator, createNewUserHandler).get(isAuthorized(), getAllUsersHandler);
+router.use(protect, allowTo("Admin"));
+
+router.route("/").post(createNewUserValidator, createNewUserHandler).get(getAllUsersHandler);
 
 router
   .route("/:id")

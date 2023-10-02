@@ -7,16 +7,14 @@ export interface User {
   createdAt: Date,
   updatedAt: Date,
   isActive: boolean,
-  avatar: string | undefined,
-  cover: string | undefined,
-  city: string,
-  website: string | undefined,
-  posts: Array<object>,
-  comments: Array<object>,
-  likes: Array<object>,
-  stories: Array<object>
-  followers: Array<object>,
-  following: Array<object>
+  role: string;
+  profile?: object,
+  posts?: Array<object>,
+  comments?: Array<object>,
+  likes?: Array<object>,
+  stories?: Array<object>
+  followers?: Array<object>,
+  following?: Array<object>
 };
 
 
