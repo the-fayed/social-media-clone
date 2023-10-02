@@ -13,12 +13,13 @@ datasource db {
 model User {
   id        Int            @id @default(autoincrement())
   name      String
-  username  String
+  username  String         @unique
   email     String         @unique
   password  String
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   isActive  Boolean        @default(true)
+  role      Roles          @default(User)
   profile   Profile?
   posts     Post[]
   comments  Comment[]
@@ -80,4 +81,9 @@ model Relationship {
   followersIds   Int
   followedUser   User @relation(name: "followed", fields: [followedUserId], references: [id])
   followers      User @relation(name: "followers", fields: [followersIds], references: [id])
+}
+
+enum Roles {
+  User
+  Admin
 }

@@ -11,10 +11,12 @@ export interface User {
   cover: string | undefined,
   city: string,
   website: string | undefined,
-  posts: Array<string>,
-  comments: Array<string>,
-  likes: Array<string>,
-  stories: Array<string>
-  followers: Array<string>,
-  following: Array<string>
+  posts: Array<object>,
+  comments: Array<object>,
+  likes: Array<object>,
+  stories: Array<object>
+  followers: Array<object>,
+  following: Array<object>
 };
+
+

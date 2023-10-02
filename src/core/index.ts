@@ -1,5 +1,6 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
+import morgan from 'morgan';
 
 dotenv.config();
 const app = express();
@@ -11,20 +12,31 @@ import globalErrorHandler from './../shared/middlewares/error.handling';
 // Importing routes
 // User routes
 import userRoutes from '../modules/user/user.routes';
+// Auth routes
+import authRoutes from '../modules/auth/auth.routes';
 
 // Public middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+// Logging in development mode
+if(process.env.MODE === "Development") {
+  app.use(morgan('dev'));
+  console.log(`Mode: ${process.env.MODE}`);
+}
 
 // Mount routes
 app.use("/api/v1/users", userRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 // Mount global error handling middleware
 app.use(globalErrorHandler);
 
+app.use('/', (req, res, next) => {
+  res.send('Social Media Clone')
+})
 
-const server = app.listen(() =>  {
+const server = app.listen(port, () =>  {
   console.log(`Server is running on ${port}`);
 });
 
