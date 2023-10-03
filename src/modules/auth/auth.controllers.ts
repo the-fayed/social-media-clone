@@ -2,7 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
 import { loginBody, signupBody } from "./auth.interfaces";
+import { sendEmail } from './../../shared/services/send.email';
+import { verifyEmail } from "./../../shared/email.templates";
 
 const prisma = new PrismaClient();
 
@@ -51,6 +54,7 @@ export const signupHandler = asyncHandler(async (req, res, next) => {
       },
     },
   });
+  await sendEmail(user.email, 'verify ur email', verifyEmail('hello'))
   res
     .status(201)
     .json({
