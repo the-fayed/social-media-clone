@@ -11,23 +11,24 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  name          String
-  username      String         @unique
-  email         String         @unique
-  password      String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  isActive      Boolean        @default(true)
-  role          Roles          @default(User)
-  emailVerifyed Boolean        @default(false)
-  profile       Profile?
-  posts         Post[]
-  comments      Comment[]
-  likes         Like[]
-  stories       Story[]
-  followers     Relationship[] @relation(name: "followers")
-  following     Relationship[] @relation(name: "followed")
+  id                      Int            @id @default(autoincrement())
+  name                    String
+  username                String         @unique
+  email                   String         @unique
+  password                String
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  isActive                Boolean        @default(true)
+  role                    Roles          @default(User)
+  emailVerified           Boolean        @default(false)
+  emailVerificationToken  String?        @unique
+  profile                 Profile?
+  posts                   Post[]
+  comments                Comment[]
+  likes                   Like[]
+  stories                 Story[]
+  followers               Relationship[] @relation(name: "followers")
+  following               Relationship[] @relation(name: "followed")
 }
 
 model Profile {
