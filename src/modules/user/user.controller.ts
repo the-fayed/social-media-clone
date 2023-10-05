@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
-import { User } from './user.interfaces';
+import { IUser } from './user.interfaces';
 
 const prisma = new PrismaClient();
 

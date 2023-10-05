@@ -22,6 +22,10 @@ model User {
   role                    Roles          @default(User)
   emailVerified           Boolean        @default(false)
   emailVerificationToken  String?        @unique
+  passResetToken          String?
+  passResetTokenExpire    String?
+  passResetCodeVerified   Boolean?
+  passChangedAt           String?
   profile                 Profile?
   posts                   Post[]
   comments                Comment[]
