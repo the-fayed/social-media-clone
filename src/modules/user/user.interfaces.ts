@@ -1,3 +1,5 @@
+import { Roles } from '@prisma/client';
+
 export interface IUser {
   name: string;
   username: string;
@@ -21,4 +23,37 @@ export interface IUser {
   stories?: Array<object>;
   followers?: Array<object>;
   following?: Array<object>;
+}
+
+export interface CreateUserBody {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  role: Roles;
+  city: string;
+  avatar?: string;
+  cover?: string;
+  website?: string;
+}
+
+export interface UpdateSpecificUserData {
+  id: number;
+  name?: string;
+  email?: string;
+  city?: string;
+  cover?: string;
+  avatar?: string;
+  website?: string;
+}
+
+export interface GetUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface UpdateLoggedUserPassword {
+  id: number;
+  password: string;
 }

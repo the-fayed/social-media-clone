@@ -1,17 +1,12 @@
 import { Router } from "express";
 
-import {
-  createNewUserHandler,
-  deleteSpecificUserHandler,
-  getAllUsersHandler,
-  getSpecificUserHandler,
-  updateSpecificUserHandler,
-} from "./user.controller";
-
+import UserControllers from "./user.controllers";
 import {
   createNewUserValidator,
   deleteSpecificUserValidator,
   getSpecificUserValidator,
+  updateLoggedUserDataValidator,
+  updateLoggedUserPasswordValidator,
   updateSpecificUserValidator,
 } from "./user.validator";
 
@@ -19,15 +14,19 @@ import { protect } from "../../shared/middlewares/protection";
 import { allowTo } from "../../shared/middlewares/user.permissions";
 
 const router = Router();
+const userControllers = new UserControllers();
 
-router.use(protect, allowTo("Admin"));
+router.use(protect, allowTo(["Admin", "User"]));
+router
+  .post("/update/loggedUserData", updateLoggedUserDataValidator, userControllers.updateLoggedUserData)
+  .post("/update/loggedUserPassword", updateLoggedUserPasswordValidator, userControllers.updateLoggedUserPassword);
 
-router.route("/").post(createNewUserValidator, createNewUserHandler).get(getAllUsersHandler);
-
+router.use(protect, allowTo(["Admin"]));
+router.route("/").post(createNewUserValidator, userControllers.createNewUser).get(userControllers.getAllUsers);
 router
   .route("/:id")
-  .get(getSpecificUserValidator, getSpecificUserHandler)
-  .put(updateSpecificUserValidator, updateSpecificUserHandler)
-  .delete(deleteSpecificUserValidator, deleteSpecificUserHandler);
+  .get(getSpecificUserValidator, userControllers.getSpecificUser)
+  .put(updateSpecificUserValidator, userControllers.UpdateSpecificUserData)
+  .delete(deleteSpecificUserValidator, userControllers.deleteAUser);
 
 export default router;

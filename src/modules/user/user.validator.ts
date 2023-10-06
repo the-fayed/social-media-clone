@@ -20,7 +20,7 @@ export const createNewUserValidator = [
     .isString()
     .withMessage("Invalid username")
     .custom(async (value: string) => {
-      const existed = prisma.user.findUnique({ where: { username: value } });
+      const existed = await prisma.user.findUnique({ where: { username: value } });
       if (existed) throw new Error("Unavailable username");
     }),
   check("name")
@@ -36,7 +36,8 @@ export const createNewUserValidator = [
     .isLength({ min: 8 })
     .withMessage("Too week password"),
   check("passwordConfirmation").custom((value: string, { req }) => {
-    if (!value || value === req.body.password) throw new Error("Password and confirmation do not match");
+    if (!value || !value === req.body.password) throw new Error("Password and confirmation do not match");
+    return true
   }),
   check("avatar").optional().isString(),
   check("cover").optional().isString(),
@@ -95,6 +96,52 @@ export const updateSpecificUserValidator = [
   check("city").optional().isAlpha().withMessage("Invalid city name"),
   check("website").optional().isLength({ max: 100 }).withMessage("Invalid website"),
   validatorMiddleware
+];
+
+export const updateLoggedUserDataValidator = [
+  check("email")
+    .optional()
+    .isEmail()
+    .withMessage("Invalid email address")
+    .custom(async (value: string) => {
+      const existed = await prisma.user.findUnique({ where: { email: value } });
+      if (existed) throw new Error("Email already in use.");
+    }),
+  check("username")
+    .optional()
+    .isString()
+    .withMessage("Invalid username")
+    .custom(async (value: string) => {
+      const existed = prisma.user.findUnique({ where: { username: value } });
+      if (existed) throw new Error("Unavailable username");
+    }),
+  check("name")
+    .optional()
+    .isString()
+    .withMessage("Invalid name")
+    .isLength({ min: 3, max: 32 })
+    .withMessage("Name must be at least 3 characters and 32 character long."),
+  check("avatar").optional().isString(),
+  check("cover").optional().isString(),
+  check("city").optional().isAlpha().withMessage("Invalid city name"),
+  check("website").optional().isLength({ max: 100 }).withMessage("Invalid website"),
+  validatorMiddleware,
+];
+
+export const updateLoggedUserPasswordValidator = [
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 8, max: 32 })
+    .withMessage("Password must be between 8 to 32 characters"),
+  check("passwordConfirmation")
+    .notEmpty()
+    .withMessage("Password confirmation is required")
+    .custom((value: string, { req }) => {
+      if (!value === req.body.password) throw new Error("Password and password confirmation must match");
+      return true;
+    }),
+    validatorMiddleware,
 ];
 
 export const deleteSpecificUserValidator = [
