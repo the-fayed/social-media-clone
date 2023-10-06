@@ -1,6 +1,6 @@
-import { PostSanitize } from 'modules/post/post.interfaces';
+import { PostSanitize } from './../modules/post/post.interfaces';
 import { LoginSanitize, SignupSanitize } from "./../modules/auth/auth.interfaces";
-import { CommentSanitize } from 'modules/comment/comment.interfaces';
+import { CommentSanitize } from './../modules/comment/comment.interfaces';
 
 class SanitizeData {
   userLogin = (user: LoginSanitize) => ({
@@ -16,9 +16,9 @@ class SanitizeData {
   });
   post = (post: PostSanitize) => ({
     id: post.id,
-    disc: post.disc,
+    desc: post.desc,
     image: post.image,
-    author: post.author,
+    postAuthor: post.postAuthor,
     likes: post.likes,
     comments: post.comments,
   });

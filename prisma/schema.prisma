@@ -47,10 +47,10 @@ model Profile {
 
 model Post {
   id           Int       @id @default(autoincrement())
-  disc         String
+  desc         String
   image        String?
-  postAutherId Int
-  auther       User      @relation(fields: [postAutherId], references: [id])
+  postAuthorId Int
+  postAuthor       User      @relation(fields: [postAuthorId], references: [id])
   createdAt    DateTime  @default(now())
   updatedUt    DateTime  @updatedAt
   comments     Comment[]
@@ -59,11 +59,11 @@ model Post {
 
 model Comment {
   id              Int    @id @default(autoincrement())
-  disc            String
+  desc            String
   postId          Int
   post            Post   @relation(fields: [postId], references: [id])
-  commentAutherId Int
-  auther          User   @relation(fields: [commentAutherId], references: [id])
+  commentAuthorId Int
+  commentAuthor          User   @relation(fields: [commentAuthorId], references: [id])
 }
 
 model Like {

@@ -48,13 +48,13 @@ class AuthService {
           return "Your email address not verified yet, please verify your email"
         }
         if (!user.emailVerificationToken) {
-          await prisma.user.update({
+          const updated = await prisma.user.update({
             where: { email: user.email },
             data: {
               emailVerificationToken: generateEmailVerificationToken(),
             },
           });
-          await sendEmail(user.email, "Email Verification", verifyEmail(user.emailVerificationToken));
+          await sendEmail(user.email, "Email Verification", verifyEmail(updated.emailVerificationToken));
           return "Your email address not verified yet, please verify your email";
         }
       } else {

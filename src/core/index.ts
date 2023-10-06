@@ -14,6 +14,8 @@ import globalErrorHandler from './../shared/middlewares/error.handling';
 import userRoutes from '../modules/user/user.routes';
 // Auth routes
 import authRoutes from '../modules/auth/auth.routes';
+// Post routes
+import postRoutes from '../modules/post/post.routes';
 
 // Public middlewares
 app.use(express.json());
@@ -28,6 +30,7 @@ if(process.env.MODE === "Development") {
 // Mount routes
 app.use("/api/v1/users", userRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/posts', postRoutes);
 
 // Mount global error handling middleware
 app.use(globalErrorHandler);
