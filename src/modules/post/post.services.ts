@@ -80,7 +80,6 @@ class PostServices {
     if (authorId) {
       filter = { postAuthorId: authorId };
     }
-    console.log(filter);
     const posts = (await prisma.post.findMany({
       where: filter,
       include: {

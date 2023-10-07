@@ -36,7 +36,7 @@ class PostController {
     if (req.params.authorId) id = Number(req.params.authorId);
     const posts = await this.postService.getAllPosts(id);
     if (!posts) return next(new ApiError("Can not get posts at time", 500));
-    res.status(200).json({ status: "success", data: posts });
+    res.status(200).json({ status: "success", data: posts});
   });
 
   /**
@@ -48,7 +48,9 @@ class PostController {
     const id = Number(req.params.id);
     const post = await this.postService.getSpecificPost(id);
     if (!post) return next(new ApiError("Can not get this post at this time", 500));
-    res.status(200).json({ status: "success", data: post });
+    res
+      .status(200)
+      .json({ status: "success", data: post });
   });
 
   /**

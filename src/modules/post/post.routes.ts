@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import PostController from "./post.controller";
 import commentRoutes from './../comment/comment.routes';
+import likeRoutes from './../like/like.routes';
 import { protect } from "./../../shared/middlewares/protection";
 import { allowTo } from "./../../shared/middlewares/user.permissions";
 
@@ -18,6 +19,7 @@ const router = Router({ mergeParams: true });
 const postController = new PostController();
 
 router.use('/:postId/comments', commentRoutes);
+router.use('/:postId/likes', likeRoutes)
 
 router.use(protect, allowTo(["User"]));
 
