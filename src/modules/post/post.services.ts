@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import SanitizeData from "../../utils/sanitize.data";
 import { CreatePostBody, PostSanitize, UpdatePostBody } from "./post.interfaces";
 import ApiError from "./../../utils/api.error";
-import cloudinary from './../../config/cloudinary';
+import cloudinary from "./../../config/cloudinary";
 
 const prisma = new PrismaClient();
 
@@ -15,14 +15,14 @@ class PostServices {
   // create post
   async createNewPost(createPostBody: CreatePostBody): Promise<PostSanitize> {
     const { postAuthorId, desc } = createPostBody;
-    let { image} = createPostBody;
+    let { image } = createPostBody;
     if (image) {
-      const avatarResult = await cloudinary.uploader.upload(image, {
-        folder: "uploads/user/avatar",
+      const imageResult = await cloudinary.uploader.upload(image, {
+        folder: "uploads/posts",
         format: "jpg",
-        public_id: `${Date.now()}-avatar`,
+        public_id: `${Date.now()}-post`,
       });
-      image = avatarResult.url;
+      image = imageResult.url;
     }
     const post = (await prisma.post.create({
       data: {
@@ -46,15 +46,15 @@ class PostServices {
   // update post
   async updateSpecificPost(updatePostBody: UpdatePostBody): Promise<PostSanitize> {
     const { postAuthorId, id, desc } = updatePostBody;
-        let { image } = updatePostBody;
-        if (image) {
-          const avatarResult = await cloudinary.uploader.upload(image, {
-            folder: "uploads/user/avatar",
-            format: "jpg",
-            public_id: `${Date.now()}-avatar`,
-          });
-          image = avatarResult.url;
-        }
+    let { image } = updatePostBody;
+    if (image) {
+      const imageResult = await cloudinary.uploader.upload(image, {
+        folder: "uploads/posts",
+        format: "jpg",
+        public_id: `${Date.now()}-post`,
+      });
+      image = imageResult.url;
+    }
     const post = (await prisma.post.update({
       where: { postAuthorId: postAuthorId, id: id },
       data: {

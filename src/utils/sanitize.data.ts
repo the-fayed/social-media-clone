@@ -24,9 +24,9 @@ class SanitizeData {
   });
   comment = (comment: CommentSanitize) => ({
     id: comment.id,
-    author: comment.author,
-    disc: comment.disc,
-    post: comment.post
+    commentAuthor: comment.commentAuthor,
+    desc: comment.desc,
+    postId: comment.postId
   });
 }
 

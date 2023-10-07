@@ -62,7 +62,7 @@ model Comment {
   postId          Int
   post            Post   @relation(fields: [postId], references: [id])
   commentAuthorId Int
-  commentAuthor          User   @relation(fields: [commentAuthorId], references: [id])
+  commentAuthor   User   @relation(fields: [commentAuthorId], references: [id])
 }
 
 model Like {
