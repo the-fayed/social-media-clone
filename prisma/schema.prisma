@@ -83,9 +83,9 @@ model Story {
 model Relationship {
   id             Int  @id @default(autoincrement())
   followedUserId Int
-  followersIds   Int
+  followerId     Int  @unique
   followedUser   User @relation(name: "followed", fields: [followedUserId], references: [id])
-  followers      User @relation(name: "followers", fields: [followersIds], references: [id])
+  followers      User @relation(name: "followers", fields: [followerId], references: [id])
 }
 
 enum Roles {

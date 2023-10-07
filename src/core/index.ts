@@ -6,8 +6,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5002;
 
-// Importing global error handling middleware
 import globalErrorHandler from "./../shared/middlewares/error.handling";
+import ApiError from "../utils/api.error";
 
 // Importing routes
 // User routes
@@ -20,7 +20,8 @@ import postRoutes from "../modules/post/post.routes";
 import commentRoutes from "../modules/comment/comment.routes";
 // Like routes
 import likeRoutes from "../modules/like/like.routes";
-import ApiError from "../utils/api.error";
+// Relationship routes
+import relationshipRoutes from "../modules/relationship/relationship.routes";
 
 // Public middlewares
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
+app.use("/api/v1/relationships", relationshipRoutes);
 
 // Unhandled routes
 app.use("*", (req, res, next) => {
