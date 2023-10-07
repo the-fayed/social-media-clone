@@ -14,7 +14,7 @@ export interface PostSanitize extends IPost {
 
 export interface CreatePostBody {
   desc: string;
-  image?: string;
+  image?: string | undefined;
   postAuthorId: number;
 }
 

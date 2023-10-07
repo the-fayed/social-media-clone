@@ -22,8 +22,7 @@ class AuthController {
       username: req.body.username,
       password: req.body.password,
       email: req.body.email,
-      avatar: req.body.avatar,
-      cover: req.body.cover,
+      avatar: req.file?.path,
       city: req.body.city,
       website: req.body.website,
     };

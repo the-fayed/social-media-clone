@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import SanitizeData from "../../utils/sanitize.data";
 import { CreatePostBody, PostSanitize, UpdatePostBody } from "./post.interfaces";
 import ApiError from "./../../utils/api.error";
-import { GetUser } from "modules/user/user.interfaces";
+import cloudinary from './../../config/cloudinary';
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,16 @@ class PostServices {
   }
   // create post
   async createNewPost(createPostBody: CreatePostBody): Promise<PostSanitize> {
-    const { postAuthorId, desc, image } = createPostBody;
+    const { postAuthorId, desc } = createPostBody;
+    let { image} = createPostBody;
+    if (image) {
+      const avatarResult = await cloudinary.uploader.upload(image, {
+        folder: "uploads/user/avatar",
+        format: "jpg",
+        public_id: `${Date.now()}-avatar`,
+      });
+      image = avatarResult.url;
+    }
     const post = (await prisma.post.create({
       data: {
         postAuthorId: postAuthorId,
@@ -36,7 +45,16 @@ class PostServices {
   }
   // update post
   async updateSpecificPost(updatePostBody: UpdatePostBody): Promise<PostSanitize> {
-    const { postAuthorId, id, desc, image } = updatePostBody;
+    const { postAuthorId, id, desc } = updatePostBody;
+        let { image } = updatePostBody;
+        if (image) {
+          const avatarResult = await cloudinary.uploader.upload(image, {
+            folder: "uploads/user/avatar",
+            format: "jpg",
+            public_id: `${Date.now()}-avatar`,
+          });
+          image = avatarResult.url;
+        }
     const post = (await prisma.post.update({
       where: { postAuthorId: postAuthorId, id: id },
       data: {

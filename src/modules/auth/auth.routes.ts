@@ -9,12 +9,17 @@ import {
   verifyEmailTokenValidator,
   verifyPasswordResetTokenValidator,
 } from "./auth.validator";
+import { uploadSingleImage } from "./../../shared/middlewares/multer";
 
 const router = Router();
 const authController = new AuthController();
 
 router
-  .post("/signup", signupValidator, authController.signup)
+  .post(
+    "/signup", uploadSingleImage('avatar'),
+    signupValidator,
+    authController.signup
+  )
   .post("/login", loginValidator, authController.login)
   .get("/verify/email/:token", verifyEmailTokenValidator, authController.verifyEmailToken)
   .post("/forgotPassword", forgotPasswordValidator, authController.forgotPassword)

@@ -19,7 +19,7 @@ class PostController {
     const createPostBody: CreatePostBody = {
       postAuthorId: Number(req.user.id),
       desc: req.body.desc,
-      image: req.body.image,
+      image: req.file?.path,
     };
     const post = await this.postService.createNewPost(createPostBody);
     if (!post) return next(new ApiError("Can not create post at time", 500));
@@ -60,7 +60,7 @@ class PostController {
     const updatePostBody: UpdatePostBody = {
       id: Number(req.params.id),
       desc: req.body.desc,
-      image: req.body.image,
+      image: req.file?.path,
       postAuthorId: req.user.id,
     };
     const post = await this.postService.updateSpecificPost(updatePostBody);

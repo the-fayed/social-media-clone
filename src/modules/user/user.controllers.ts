@@ -22,8 +22,7 @@ class UserControllers {
       password: req.body.password,
       city: req.body.city,
       role: req.body.role,
-      avatar: req.body.avatar,
-      cover: req.body.cover,
+      avatar: req.file?.path,
       website: req.body.website,
     };
     const user = await this.userServices.createUser(createUserBody);
@@ -65,8 +64,7 @@ class UserControllers {
       name: req.body.name,
       city: req.body.city,
       email: req.body.email,
-      avatar: req.body.avatar,
-      cover: req.body.cover,
+      avatar: req.file?.path,
       website: req.body.website,
     };
     const user = await this.userServices.updateSpecificUserData(updateSpecificUserDataBody);
@@ -85,8 +83,7 @@ class UserControllers {
       name: req.body.name,
       city: req.body.city,
       email: req.body.email,
-      avatar: req.body.avatar,
-      cover: req.body.cover,
+      avatar: req.file?.path,
       website: req.body.website,
     };
     const user = await this.userServices.updateSpecificUserData(updateSpecificUserDataBody);

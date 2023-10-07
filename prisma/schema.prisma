@@ -40,7 +40,6 @@ model Profile {
   userId  Int     @unique
   user    User    @relation(fields: [userId], references: [id])
   avatar  String?
-  cover   String?
   city    String
   website String?
 }
@@ -50,7 +49,7 @@ model Post {
   desc         String
   image        String?
   postAuthorId Int
-  postAuthor       User      @relation(fields: [postAuthorId], references: [id])
+  postAuthor   User      @relation(fields: [postAuthorId], references: [id])
   createdAt    DateTime  @default(now())
   updatedUt    DateTime  @updatedAt
   comments     Comment[]

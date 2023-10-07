@@ -26,8 +26,7 @@ export interface ILogin extends LoginSanitize {
 export interface SignupBody extends LoginBody {
   name: string;
   username: string;
-  avatar?: string;
-  cover?: string;
+  avatar?: string | undefined;
   city: string;
   website?: string;
 }

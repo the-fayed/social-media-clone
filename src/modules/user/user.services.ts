@@ -1,42 +1,53 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 
-import { CreateUserBody, GetUser, IUser, UpdateLoggedUserPassword, UpdateSpecificUserData } from './user.interfaces';
-import ApiError from './../../utils/api.error';
+import { CreateUserBody, GetUser, IUser, UpdateLoggedUserPassword, UpdateSpecificUserData } from "./user.interfaces";
+import ApiError from "./../../utils/api.error";
+import cloudinary from "./../../config/cloudinary";
 
 const prisma = new PrismaClient();
 
 class UserServices {
   // create new user
-  async createUser (createUserBody: CreateUserBody): Promise<GetUser> {
-    const {email, password, username, name, cover, city, avatar, website, role} = createUserBody;
-    const user = await prisma.user.create({data: {
-      username: username,
-      email: email,
-      password: bcrypt.hashSync(password, 12),
-      name: name,
-      role: role,
-      profile: {
-        create: {
-          city: city,
-          avatar: avatar,
-          cover: cover,
-          website: website
-        }
-      }
-    }}) as GetUser;
-    if (!user) throw new ApiError('Error while creating user try again later', 400);
+  async createUser(createUserBody: CreateUserBody): Promise<GetUser> {
+    const { email, password, username, name, city, website, role } = createUserBody;
+    let { avatar } = createUserBody;
+    if (avatar) {
+      const avatarResult = await cloudinary.uploader.upload(avatar, {
+        folder: "uploads/user/avatar",
+        format: "jpg",
+        public_id: `${Date.now()}-avatar`,
+      });
+      avatar = avatarResult.url;
+    }
+    const user = (await prisma.user.create({
+      data: {
+        username: username,
+        email: email,
+        password: bcrypt.hashSync(password, 12),
+        name: name,
+        role: role,
+        profile: {
+          create: {
+            city: city,
+            avatar: avatar,
+            website: website,
+          },
+        },
+      },
+    })) as GetUser;
+    if (!user) throw new ApiError("Error while creating user try again later", 400);
     return user;
-  };
+  }
   // get all users
-  async getAllUsers (): Promise<Array<GetUser>> {
-    const users = await prisma.user.findMany() as Array<GetUser>;
-    if (!users) throw new ApiError('No users where found', 404);
+  async getAllUsers(): Promise<Array<GetUser>> {
+    const users = (await prisma.user.findMany()) as Array<GetUser>;
+    if (!users) throw new ApiError("No users where found", 404);
     return users;
   }
   // get single user by id
-  async getSpecificUser (id: number): Promise<IUser> {
-    const user = await prisma.user.findUnique({
+  async getSpecificUser(id: number): Promise<IUser> {
+    const user = (await prisma.user.findUnique({
       where: { id: id },
       include: {
         profile: true,
@@ -47,13 +58,22 @@ class UserServices {
         followers: true,
         following: true,
       },
-    }) as IUser;
-    if(!user)throw new ApiError(`Can't find a user with the ID of ${id}`, 503);
+    })) as IUser;
+    if (!user) throw new ApiError(`Can't find a user with the ID of ${id}`, 503);
     return user;
   }
   // update specific user data
-  async updateSpecificUserData (updateSpecificUserDataBody: UpdateSpecificUserData): Promise<GetUser> {
-    const { id, email, name, cover, city, avatar, website } = updateSpecificUserDataBody;
+  async updateSpecificUserData(updateSpecificUserDataBody: UpdateSpecificUserData): Promise<GetUser> {
+    const { id, email, name, city, website } = updateSpecificUserDataBody;
+    let { avatar } = updateSpecificUserDataBody;
+    if (avatar) {
+      const avatarResult = await cloudinary.uploader.upload(avatar, {
+        folder: "uploads/user/avatar",
+        format: "jpg",
+        public_id: `${Date.now()}-avatar`,
+      });
+      avatar = avatarResult.url;
+    }
     const user = (await prisma.user.update({
       where: { id: id },
       data: {
@@ -63,31 +83,43 @@ class UserServices {
           update: {
             city: city,
             avatar: avatar,
-            cover: cover,
             website: website,
           },
         },
       },
+      select: {
+        name: true,
+        email: true,
+        id: true,
+      },
     })) as GetUser;
     if (!user) throw new ApiError("The specified user does not exist", 404);
     return user;
-  };
+  }
   // delete user
-  async deleteSpecificUser (id: number): Promise<string> {
-    const user = await prisma.user.update({where: {id: id}, data: {isActive: false}});
-    if (!user || !user.isActive) throw new ApiError('User not found!', 404);
-    return 'User has been deleted successfully';
+  async deleteSpecificUser(id: number): Promise<string> {
+    const user = await prisma.user.update({ where: { id: id }, data: { isActive: false } });
+    if (!user || !user.isActive) throw new ApiError("User not found!", 404);
+    return "User has been deleted successfully";
   }
   // update logged user Password
   async updateLoggedUserPassword(updateLoggedUserPasswordBody: UpdateLoggedUserPassword): Promise<GetUser> {
-    const { id, password} = updateLoggedUserPasswordBody;
-    const user = await prisma.user.update({where: {id: id}, data:{
-      password: bcrypt.hashSync(password, 12),
-      passChangedAt: String(Date.now())
-    }}) as GetUser;
-    if (!user) throw new ApiError('Error while updating password', 400);
+    const { id, password } = updateLoggedUserPasswordBody;
+    const user = (await prisma.user.update({
+      where: { id: id },
+      data: {
+        password: bcrypt.hashSync(password, 12),
+        passChangedAt: String(Date.now()),
+      },
+      select: {
+        name: true,
+        email: true,
+        id: true,
+      },
+    })) as GetUser;
+    if (!user) throw new ApiError("Error while updating password", 400);
     return user;
   }
-};
+}
 
 export default UserServices;
