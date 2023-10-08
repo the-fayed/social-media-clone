@@ -50,7 +50,7 @@ export interface UpdateSpecificUserData {
 export interface GetUser {
   id: number;
   name: string;
-  email: string;
+  email?: string;
 }
 
 export interface UpdateLoggedUserPassword {

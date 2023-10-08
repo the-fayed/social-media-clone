@@ -9,6 +9,9 @@ export const followOrUnFollowUserValidator = [
   check('userId').notEmpty().withMessage('User id is required').isNumeric().withMessage('Invalid user id').custom(async (value: string) => {
     const user = await prisma.user.findUnique({where: {id: Number(value)}});
     if (!user) throw new Error('User you want to follow not found');
+  }).custom((value: string, {req}) => {
+    if (Number(value) === Number(req.user.id)) throw new Error('You can not follow your self');
+    return true
   }),
   validatorMiddleware
 ]

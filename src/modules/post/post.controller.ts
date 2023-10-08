@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 
 import PostServices from "./post.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
-import { CreatePostBody, UpdatePostBody } from "./post.interfaces";
+import { CreatePostBody, GetAllPostsBody, UpdatePostBody, getSpecificPostBody } from "./post.interfaces";
 import ApiError from "./../../utils/api.error";
 
 class PostController {
@@ -20,6 +20,7 @@ class PostController {
       postAuthorId: Number(req.user.id),
       desc: req.body.desc,
       image: req.file?.path,
+      privacy: req.body.privacy,
     };
     const post = await this.postService.createNewPost(createPostBody);
     if (!post) return next(new ApiError("Can not create post at time", 500));
@@ -31,10 +32,12 @@ class PostController {
    *  @route    GET /api/v1/posts || /api/v1/users/:authorId/posts
    *  @access   Private (User)
    */
-  getAllPosts = asyncHandler(async (req, res, next): Promise<void> => {
-    let id;
-    if (req.params.authorId) id = Number(req.params.authorId);
-    const posts = await this.postService.getAllPosts(id);
+  getAllPosts = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
+    const getAllPostsBody: GetAllPostsBody = {
+      authorId: Number(req.params?.authorId),
+      loggedUserId: Number(req.user.id),
+    };
+    const posts = await this.postService.getAllPosts(getAllPostsBody);
     if (!posts) return next(new ApiError("Can not get posts at time", 500));
     res.status(200).json({ status: "success", data: posts });
   });
@@ -45,20 +48,23 @@ class PostController {
    *  @access   Private (User)
    */
   getLoggedUserPosts = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
-    const userId = req.user.id;
-    const posts = await this.postService.getAllPosts(userId);
-    if (!posts) return next(new ApiError('Can not process your request at the moment', 500));
-    res.status(200).json({status: 'success', data: posts});
-  })
+    const loggedUserId = req.user.id;
+    const posts = await this.postService.getLoggedUserPosts(loggedUserId);
+    if (!posts) return next(new ApiError("Can not process your request at the moment", 500));
+    res.status(200).json({ status: "success", data: posts });
+  });
 
   /**
    *  @desc     Get specific post
    *  @route    GET /api/v1/posts/:id
    *  @access   Private (User)
    */
-  getSpecificPost = asyncHandler(async (req, res, next): Promise<void> => {
-    const id = Number(req.params.id);
-    const post = await this.postService.getSpecificPost(id);
+  getSpecificPost = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
+    const getSpecificPostBody: getSpecificPostBody = {
+      postId: Number(req.params.id),
+      loggedUserId: Number(req.user.id),
+    };
+    const post = await this.postService.getSpecificPost(getSpecificPostBody);
     if (!post) return next(new ApiError("Can not get this post at this time", 500));
     res.status(200).json({ status: "success", data: post });
   });

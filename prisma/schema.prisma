@@ -11,28 +11,28 @@ datasource db {
 }
 
 model User {
-  id                      Int            @id @default(autoincrement())
-  name                    String
-  username                String         @unique
-  email                   String         @unique
-  password                String
-  createdAt               DateTime       @default(now())
-  updatedAt               DateTime       @updatedAt
-  isActive                Boolean        @default(true)
-  role                    Roles          @default(User)
-  emailVerified           Boolean        @default(false)
-  emailVerificationToken  String?        @unique
-  passResetToken          String?
-  passResetTokenExpire    String?
-  passResetCodeVerified   Boolean?
-  passChangedAt           String?
-  profile                 Profile?
-  posts                   Post[]
-  comments                Comment[]
-  likes                   Like[]
-  stories                 Story[]
-  followers               Relationship[] @relation(name: "followers")
-  following               Relationship[] @relation(name: "followed")
+  id                     Int            @id @default(autoincrement())
+  name                   String
+  username               String         @unique
+  email                  String         @unique
+  password               String
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  isActive               Boolean        @default(true)
+  role                   Roles          @default(User)
+  emailVerified          Boolean        @default(false)
+  emailVerificationToken String?        @unique
+  passResetToken         String?
+  passResetTokenExpire   String?
+  passResetCodeVerified  Boolean?
+  passChangedAt          String?
+  profile                Profile?
+  posts                  Post[]
+  comments               Comment[]
+  likes                  Like[]
+  stories                Story[]
+  followers              Relationship[] @relation(name: "followers")
+  following              Relationship[] @relation(name: "followed")
 }
 
 model Profile {
@@ -45,13 +45,14 @@ model Profile {
 }
 
 model Post {
-  id           Int       @id @default(autoincrement())
+  id           Int                 @id @default(autoincrement())
   desc         String
   image        String?
   postAuthorId Int
-  postAuthor   User      @relation(fields: [postAuthorId], references: [id])
-  createdAt    DateTime  @default(now())
-  updatedUt    DateTime  @updatedAt
+  postAuthor   User                @relation(fields: [postAuthorId], references: [id])
+  createdAt    DateTime            @default(now())
+  updatedUt    DateTime            @updatedAt
+  privacy      Privacy             @default(public)
   comments     Comment[]
   Likes        Like[]
 }
@@ -66,18 +67,19 @@ model Comment {
 }
 
 model Like {
-  id           Int  @id @default(autoincrement())
-  postId       Int
-  post         Post @relation(fields: [postId], references: [id])
-  likeUserId   Int
-  likeUser     User @relation(fields: [likeUserId], references: [id])
+  id         Int  @id @default(autoincrement())
+  postId     Int
+  post       Post @relation(fields: [postId], references: [id])
+  likeUserId Int
+  likeUser   User @relation(fields: [likeUserId], references: [id])
 }
 
 model Story {
-  id     Int    @id @default(autoincrement())
-  image  String
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  id             Int                 @id @default(autoincrement())
+  image          String
+  storyAuthorId  Int
+  storyAuthor    User                @relation(fields: [storyAuthorId], references: [id])
+  privacy        Privacy             @default(public)
 }
 
 model Relationship {
@@ -91,4 +93,10 @@ model Relationship {
 enum Roles {
   User
   Admin
+}
+
+enum Privacy {
+  public
+  followers
+  noone
 }

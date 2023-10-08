@@ -22,6 +22,8 @@ import commentRoutes from "../modules/comment/comment.routes";
 import likeRoutes from "../modules/like/like.routes";
 // Relationship routes
 import relationshipRoutes from "../modules/relationship/relationship.routes";
+// Story routes
+import storyRoutes from '../modules/story/story.routes';
 
 // Public middlewares
 app.use(express.json());
@@ -40,6 +42,7 @@ app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/relationships", relationshipRoutes);
+app.use('/api/v1/stories', storyRoutes)
 
 // Unhandled routes
 app.use("*", (req, res, next) => {

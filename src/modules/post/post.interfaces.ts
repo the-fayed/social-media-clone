@@ -1,11 +1,15 @@
-import { GetUser } from "./../../modules/user/user.interfaces";
+import { Privacy } from "@prisma/client";
 
 export interface IPost {
-  postAuthor: GetUser;
+  postAuthor: {
+    id: number;
+    name: string;
+  };
   desc: string;
   image?: string;
   likes?: Array<object>;
   comments?: Array<object>;
+  privacy: Privacy;
 }
 
 export interface PostSanitize extends IPost {
@@ -16,6 +20,7 @@ export interface CreatePostBody {
   desc: string;
   image?: string | undefined;
   postAuthorId: number;
+  privacy?: Privacy;
 }
 
 export interface UpdatePostBody {
@@ -23,6 +28,7 @@ export interface UpdatePostBody {
   desc?: string;
   image?: string;
   postAuthorId: number;
+  privacy?: Privacy;
 }
 
 export interface GetPost {
@@ -32,4 +38,14 @@ export interface GetPost {
   postAuthorId: number;
   likes?: Array<object>;
   comments?: Array<object>;
+}
+
+export interface GetAllPostsBody {
+  authorId?: number | undefined;
+  loggedUserId: number;
+}
+
+export interface getSpecificPostBody {
+  loggedUserId: number;
+  postId: number;
 }
