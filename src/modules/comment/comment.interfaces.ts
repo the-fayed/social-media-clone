@@ -1,3 +1,4 @@
+import { Paginate } from './../../shared/utils/api.features/api.features.interfaces';
 
 export interface IComment {
   commentAuthor: {
@@ -10,6 +11,11 @@ export interface IComment {
 
 export interface CommentSanitize extends IComment{
   id: number
+}
+
+export interface GetAllCommentsApiFeature {
+  comments: CommentSanitize,
+  paginationResult: Paginate,
 }
 
 export interface CreateNewCommentBody {
@@ -25,7 +31,7 @@ export interface UpdateCommentBody {
 }
 
 export interface DeleteCommentBody {
-  id: number;
-  commentAuthorId?: number;
-  postAuthorId?: number;
+  commentId: number;
+  postId?: number;
+  loggedUser?: number;
 }

@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 5002;
 
 import globalErrorHandler from "./../shared/middlewares/error.handling";
-import ApiError from "../utils/api.error";
+import ApiError from "../shared/utils/api.error";
 
 // Importing routes
 // User routes

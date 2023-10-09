@@ -2,8 +2,8 @@ import asyncHandler from "express-async-handler";
 
 import PostServices from "./post.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
-import { CreatePostBody, GetAllPostsBody, UpdatePostBody, getSpecificPostBody } from "./post.interfaces";
-import ApiError from "./../../utils/api.error";
+import { CreatePostBody, GetAllPostsBody, UpdatePostBody, GetSpecificPostBody } from "./post.interfaces";
+import ApiError from "../../shared/utils/api.error";
 
 class PostController {
   private postService: PostServices;
@@ -36,10 +36,11 @@ class PostController {
     const getAllPostsBody: GetAllPostsBody = {
       authorId: Number(req.params?.authorId),
       loggedUserId: Number(req.user.id),
+      reqQuery: req.query,
     };
-    const posts = await this.postService.getAllPosts(getAllPostsBody);
-    if (!posts) return next(new ApiError("Can not get posts at time", 500));
-    res.status(200).json({ status: "success", data: posts });
+    const results = await this.postService.getAllPosts(getAllPostsBody);
+    if (!results) return next(new ApiError("Can not get posts at time", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.posts });
   });
 
   /**
@@ -49,9 +50,10 @@ class PostController {
    */
   getLoggedUserPosts = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
     const loggedUserId = req.user.id;
-    const posts = await this.postService.getLoggedUserPosts(loggedUserId);
-    if (!posts) return next(new ApiError("Can not process your request at the moment", 500));
-    res.status(200).json({ status: "success", data: posts });
+    const reqQuery = req.query;
+    const results = await this.postService.getLoggedUserPosts(loggedUserId, reqQuery);
+    if (!results) return next(new ApiError("Can not process your request at the moment", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.posts });
   });
 
   /**
@@ -60,7 +62,7 @@ class PostController {
    *  @access   Private (User)
    */
   getSpecificPost = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
-    const getSpecificPostBody: getSpecificPostBody = {
+    const getSpecificPostBody: GetSpecificPostBody = {
       postId: Number(req.params.id),
       loggedUserId: Number(req.user.id),
     };

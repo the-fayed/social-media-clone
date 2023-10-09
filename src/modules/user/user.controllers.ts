@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { CreateUserBody, IUser, UpdateLoggedUserPassword, UpdateSpecificUserData } from "./user.interfaces";
 import UserServices from "./user.services";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
 
 class UserControllers {
@@ -46,11 +46,23 @@ class UserControllers {
    *  @route  GET /api/v1/users/:id
    *  @access Privet (Admin)
    */
-  getSpecificUser = asyncHandler(async (req, res, next) => {
+  getSpecificUser = asyncHandler(async (req, res, next): Promise<void> => {
     const { id } = req.params;
     const user = await this.userServices.getSpecificUser(Number(id));
     if (!user) return next(new ApiError("Can not get this user at the time", 500));
     res.status(200).json({ status: "success", data: user });
+  });
+
+  /**
+   *  @desc   Search for users
+   *  @route  GET /api/v1/users/search
+   *  @access Privet (User)
+   */
+  searchForUsers = asyncHandler(async (req, res, next): Promise<void> => {
+    const reqQuery = req.query;
+    const results = await this.userServices.searchForUsers(reqQuery);
+    if (!results) return next(new ApiError("can not search at the time", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.users });
   });
 
   /**

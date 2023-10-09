@@ -5,7 +5,7 @@ import UserControllers from "./user.controllers";
 import { protect } from "../../shared/middlewares/protection";
 import { allowTo } from "../../shared/middlewares/user.permissions";
 import postRoutes from "./../post/post.routes";
-import relationshipsRoutes from './../relationship/relationship.routes';
+import relationshipsRoutes from "./../relationship/relationship.routes";
 import { uploadSingleImage } from "./../../shared/middlewares/multer";
 
 import {
@@ -21,7 +21,9 @@ const router = Router();
 const userControllers = new UserControllers();
 
 router.use("/:authorId/posts", postRoutes); //* nested route
-router.use('/:userId/relationships', relationshipsRoutes); //* nested route
+router.use("/:userId/relationships", relationshipsRoutes); //* nested route
+
+router.get("/search", protect, allowTo(["User"]), userControllers.searchForUsers);
 
 router.use(protect, allowTo(["Admin", "User"]));
 router

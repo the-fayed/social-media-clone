@@ -1,9 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-import { CreateUserBody, GetUser, IUser, UpdateLoggedUserPassword, UpdateSpecificUserData } from "./user.interfaces";
-import ApiError from "./../../utils/api.error";
+import {
+  CreateUserBody,
+  GetUser,
+  GetUserApiFeatures,
+  IUser,
+  UpdateLoggedUserPassword,
+  UpdateSpecificUserData,
+} from "./user.interfaces";
+import ApiError from "../../shared/utils/api.error";
 import cloudinary from "./../../config/cloudinary";
+import ApiFeatures from "../../shared/utils/api.features/api.features";
+import { ReqQuery } from "./../../shared/utils/api.features/api.features.interfaces";
 
 const prisma = new PrismaClient();
 
@@ -119,6 +128,34 @@ class UserServices {
     })) as GetUser;
     if (!user) throw new ApiError("Error while updating password", 400);
     return user;
+  }
+  // search for users
+  async searchForUsers(reqQuery: ReqQuery): Promise<GetUserApiFeatures> {
+    const documentCount = await prisma.user.count({
+      where: {
+        OR: [
+          { name: { contains: reqQuery.keyword } },
+          { username: { contains: reqQuery.keyword } },
+          { email: { contains: reqQuery.keyword } },
+        ],
+      },
+    });
+    const feature = new ApiFeatures(
+      prisma.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: reqQuery.keyword } },
+            { username: { contains: reqQuery.keyword } },
+            { email: { contains: reqQuery.keyword } },
+          ],
+        },
+        select: { name: true, id: true, email: true, username: true },
+      }),
+      reqQuery
+    ).paginate(documentCount);
+    const { dbQuery, paginationResult } = feature;
+    const users = (await dbQuery) as Array<GetUser>;
+    return { paginationResult, users };
   }
 }
 

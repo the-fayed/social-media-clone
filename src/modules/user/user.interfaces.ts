@@ -57,3 +57,14 @@ export interface UpdateLoggedUserPassword {
   id: number;
   password: string;
 }
+
+export interface GetUserApiFeatures {
+  users: Array<GetUser>;
+  paginationResult: {
+    limit: number;
+    currentPage: number;
+    documentCount: number;
+    nextPage?: number;
+    previousPage?: number;
+  };
+}

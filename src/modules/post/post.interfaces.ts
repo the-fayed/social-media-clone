@@ -1,4 +1,5 @@
 import { Privacy } from "@prisma/client";
+import { ReqQuery } from './../../shared/utils/api.features/api.features.interfaces';
 
 export interface IPost {
   postAuthor: {
@@ -14,6 +15,8 @@ export interface IPost {
 
 export interface PostSanitize extends IPost {
   id: number;
+  totalLikes?: number,
+  totalComments?: number
 }
 
 export interface CreatePostBody {
@@ -43,9 +46,21 @@ export interface GetPost {
 export interface GetAllPostsBody {
   authorId?: number | undefined;
   loggedUserId: number;
+  reqQuery?: ReqQuery;
 }
 
-export interface getSpecificPostBody {
+export interface GetSpecificPostBody {
   loggedUserId: number;
   postId: number;
+}
+
+export interface GetPostsApiFeatures {
+  posts: Array<PostSanitize>;
+  paginationResult: {
+    limit: number | string;
+    currentPage: string | number;
+    documentCount: number;
+    nextPage?: string | number;
+    previousPage?: string | number;
+  };
 }

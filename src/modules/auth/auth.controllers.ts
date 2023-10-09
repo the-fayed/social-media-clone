@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 
 import AuthService from "./auth.services";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 import { LoginBody, LoginSanitize, SignupBody } from "./auth.interfaces";
 import { generateAccessToken } from "./../../shared/services/code.factor";
 

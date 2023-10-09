@@ -1,4 +1,4 @@
-import ApiError from "./../../utils/api.error";
+import ApiError from "../utils/api.error";
 import { Response, Request, NextFunction } from "express";
 
 const sendErrorInProduction = (error: ApiError, res: Response): void => {

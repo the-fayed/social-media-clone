@@ -45,16 +45,18 @@ model Profile {
 }
 
 model Post {
-  id           Int                 @id @default(autoincrement())
-  desc         String
-  image        String?
-  postAuthorId Int
-  postAuthor   User                @relation(fields: [postAuthorId], references: [id])
-  createdAt    DateTime            @default(now())
-  updatedUt    DateTime            @updatedAt
-  privacy      Privacy             @default(public)
-  comments     Comment[]
-  Likes        Like[]
+  id            Int                 @id @default(autoincrement())
+  desc          String
+  image         String?
+  postAuthorId  Int
+  postAuthor    User                @relation(fields: [postAuthorId], references: [id])
+  createdAt     DateTime            @default(now())
+  updatedUt     DateTime            @updatedAt
+  privacy       Privacy             @default(public)
+  comments      Comment[]
+  totalComments Int?
+  Likes         Like[]
+  totalLikes    Int?
 }
 
 model Comment {

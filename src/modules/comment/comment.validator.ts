@@ -75,9 +75,9 @@ export const deleteCommentValidator = [
     .withMessage("Post id is required")
     .isNumeric()
     .withMessage("Invalid post id")
-    .custom(async (value: string, { req }) => {
+    .custom(async (value: string) => {
       const comment = await prisma.comment.findUnique({
-        where: { id: Number(value), commentAuthorId: Number(req.user.id) },
+        where: { id: Number(value) },
       });
       if (!comment) throw new Error("Comment not found");
     }),

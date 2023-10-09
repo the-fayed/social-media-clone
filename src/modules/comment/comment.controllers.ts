@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import CommentServices from "./comment.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
 import { CreateNewCommentBody, DeleteCommentBody, UpdateCommentBody } from "./comment.interfaces";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 
 class CommentControllers {
   private commentServices: CommentServices;
@@ -33,9 +33,10 @@ class CommentControllers {
    */
   getAllComments = asyncHandler(async (req, res, next): Promise<void> => {
     const postId = Number(req.params.postId);
-    const comments = await this.commentServices.getAllComments(postId);
-    if (!comments) return next(new ApiError("Can not get comments for this post at the moment", 500));
-    res.status(200).json({ status: "success", data: comments });
+    const reqQuery = req.query;
+    const results = await this.commentServices.getAllComments(postId, reqQuery);
+    if (!results) return next(new ApiError("Can not get comments for this post at the moment", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.comments });
   });
 
   /**
@@ -59,12 +60,12 @@ class CommentControllers {
     const updateCommentBody: UpdateCommentBody = {
       id: Number(req.params.id),
       desc: req.body.desc,
-      commentAuthorId: Number(req.user.id)
+      commentAuthorId: Number(req.user.id),
     };
     const comment = await this.commentServices.updateSpecificComment(updateCommentBody);
-    if (!comment) return next (new ApiError('Can not update this comment at the moment', 500));
-    res.status(200).json({status: 'success', message: 'Comment updated successfully', data: comment})
-  })
+    if (!comment) return next(new ApiError("Can not update this comment at the moment", 500));
+    res.status(200).json({ status: "success", message: "Comment updated successfully", data: comment });
+  });
 
   /**
    *  @desc     Delete a specific comment
@@ -73,8 +74,9 @@ class CommentControllers {
    */
   deleteSpecificComment = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
     const deleteCommentBody: DeleteCommentBody = {
-      id: Number(req.params.id),
-      commentAuthorId: Number(req.user.id),
+      commentId: Number(req.params.id),
+      loggedUser: Number(req.user.id),
+      postId: Number(req.params.postId),
     };
     const result = await this.commentServices.deleteSpecificComment(deleteCommentBody);
     if (!result) return next(new ApiError("Can not delete this comment at the moment", 500));

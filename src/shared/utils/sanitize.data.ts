@@ -1,7 +1,7 @@
-import { PostSanitize } from './../modules/post/post.interfaces';
-import { LoginSanitize, SignupSanitize } from "./../modules/auth/auth.interfaces";
-import { CommentSanitize } from './../modules/comment/comment.interfaces';
-import { StorySanitize } from './../modules/story/story.interfaces';
+import { PostSanitize } from "../../modules/post/post.interfaces";
+import { LoginSanitize, SignupSanitize } from "../../modules/auth/auth.interfaces";
+import { CommentSanitize } from "../../modules/comment/comment.interfaces";
+import { StorySanitize } from "../../modules/story/story.interfaces";
 
 class SanitizeData {
   userLogin = (user: LoginSanitize) => ({
@@ -22,19 +22,19 @@ class SanitizeData {
     postAuthor: post.postAuthor,
     likes: post.likes,
     comments: post.comments,
-    privacy: post.privacy
+    privacy: post.privacy,
   });
   comment = (comment: CommentSanitize) => ({
     id: comment.id,
     commentAuthor: comment.commentAuthor,
     desc: comment.desc,
-    postId: comment.postId
+    postId: comment.postId,
   });
   story = (story: StorySanitize) => ({
     id: story.id,
     storyAuthor: story.storyAuthor,
-    image: story.image
-  })
+    image: story.image,
+  });
 }
 
 export default SanitizeData;

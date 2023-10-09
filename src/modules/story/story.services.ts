@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 
-import SanitizeData from "./../../utils/sanitize.data";
+import SanitizeData from "../../shared/utils/sanitize.data";
 import { CreateStoryBody, DeleteStoryBody, StorySanitize, UpdateStoryPrivacyBody } from "./story.interfaces";
 import cloudinary from "./../../config/cloudinary";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 
 const prisma = new PrismaClient();
 

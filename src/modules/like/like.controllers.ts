@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import LikeServices from "./like.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
 import { LikeData } from "./like.interfaces";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 
 class LikeControllers {
   private likeServices: LikeServices;

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import { PrismaClient } from "@prisma/client";
 
-import ApiError from "../../utils/api.error";
+import ApiError from "../utils/api.error";
 import { AuthorizationRequest, Decoded } from "../../modules/auth/auth.interfaces";
 
 const prisma = new PrismaClient();

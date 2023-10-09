@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 
-import { FollowOrUnFollowUserBody, SanitizeFollowers, SanitizeFollowing } from "./relationship.interfaces";
-import ApiError from "./../../utils/api.error";
+import { FollowOrUnFollowUserBody, GetLoggedUserFollowersApiFeature, GetLoggedUserFollowingsApiFeature, SanitizeFollowers, SanitizeFollowing } from "./relationship.interfaces";
+import ApiError from "../../shared/utils/api.error";
+import { ReqQuery } from "./../../shared/utils/api.features/api.features.interfaces";
+import ApiFeatures from "./../../shared/utils/api.features/api.features";
 
 const prisma = new PrismaClient();
 
@@ -31,24 +33,36 @@ class RelationshipServices {
   }
 
   // Get logged user followers
-  async getLoggedUserFollowers(userId: number): Promise<Array<SanitizeFollowers>> {
-    const followers = (await prisma.relationship.findMany({
-      where: { followedUserId: userId },
-      select: { id: true, followers: { select: { name: true, id: true } } },
-    })) as Array<SanitizeFollowers>;
+  async getLoggedUserFollowers(userId: number, reqQuery: ReqQuery): Promise<GetLoggedUserFollowersApiFeature> {
+    const documentCount = await prisma.relationship.count({ where: { followedUserId: userId } });
+    const feature = new ApiFeatures(
+      prisma.relationship.findMany({
+        where: { followedUserId: userId },
+        select: { id: true, followers: { select: { name: true, id: true } } },
+      }),
+      reqQuery
+    ).paginate(documentCount);
+    const {dbQuery, paginationResult} = feature;
+    const followers = await dbQuery;
     if (!followers) throw new ApiError("You do not have any followers yet", 404);
-    return followers;
+    return {paginationResult, followers};
   }
 
   // get logged user following list
-  async getLoggedUserFollowing(userId: number): Promise<Array<SanitizeFollowing>> {
-    const following = (await prisma.relationship.findMany({
-      where: { followerId: userId },
-      select: { id: true, followedUser: { select: { name: true, id: true } } },
-    })) as Array<SanitizeFollowing>;
-    if (!following) throw new ApiError('You have not followed any one yet', 404);
-    return following;
-  };
+  async getLoggedUserFollowing(userId: number, reqQuery: ReqQuery): Promise<GetLoggedUserFollowingsApiFeature> {
+    const documentCount = await prisma.relationship.count({ where: { followerId: userId } });
+    const feature = new ApiFeatures(
+      prisma.relationship.findMany({
+        where: { followedUserId: userId },
+        select: { id: true, followedUser: { select: { name: true, id: true } } },
+      }),
+      reqQuery
+    ).paginate(documentCount);
+    const { dbQuery, paginationResult } = feature;
+    const following = await dbQuery;
+    if (!following) throw new ApiError("You do not have follow any one yet", 404);
+    return { paginationResult, following };
+  }
 }
 
 export default RelationshipServices;

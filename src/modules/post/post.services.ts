@@ -1,9 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 
-import SanitizeData from "../../utils/sanitize.data";
-import { CreatePostBody, GetAllPostsBody, PostSanitize, UpdatePostBody, getSpecificPostBody } from "./post.interfaces";
-import ApiError from "./../../utils/api.error";
+import SanitizeData from "../../shared/utils/sanitize.data";
+import {
+  CreatePostBody,
+  GetAllPostsBody,
+  PostSanitize,
+  UpdatePostBody,
+  GetSpecificPostBody,
+  GetPostsApiFeatures,
+} from "./post.interfaces";
+import ApiError from "../../shared/utils/api.error";
 import cloudinary from "./../../config/cloudinary";
+import ApiFeatures from "../../shared/utils/api.features/api.features";
+import { ReqQuery } from './../../shared/utils/api.features/api.features.interfaces';
 
 const prisma = new PrismaClient();
 
@@ -76,8 +85,8 @@ class PostServices {
     return this.sanitizeData.post(post);
   }
   // get all posts
-  async getAllPosts(getAllPostsBody: GetAllPostsBody): Promise<Array<PostSanitize>> {
-    const {authorId, loggedUserId} = getAllPostsBody;
+  async getAllPosts(getAllPostsBody: GetAllPostsBody): Promise<GetPostsApiFeatures> {
+    const { authorId, loggedUserId, reqQuery } = getAllPostsBody;
     let filter = {};
     if (authorId) {
       filter = { postAuthorId: authorId };
@@ -85,27 +94,48 @@ class PostServices {
     const followingList = await prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
     followingListIds = followingList?.map((item) => item.followedUserId) ?? [];
-    const posts = (await prisma.post.findMany({
+    const documentCount = await prisma.post.count({
       where: {
         OR: [
           { ...filter, privacy: "public" },
           { ...filter, postAuthorId: { in: followingListIds }, privacy: { in: ["followers", "public"] } },
         ],
+        postAuthorId: { not: loggedUserId },
       },
-      include: {
-        postAuthor: {
-          select: {
-            id: true,
-            name: true,
+    });
+    const feature = new ApiFeatures(
+      prisma.post.findMany({
+        where: {
+          OR: [
+            { ...filter, privacy: "public" },
+            { ...filter, postAuthorId: { in: followingListIds }, privacy: { in: ["followers", "public"] } },
+          ],
+          postAuthorId: { not: loggedUserId },
+        },
+        include: {
+          postAuthor: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      },
-    })) as Array<PostSanitize>;
-    if (!posts) throw new ApiError("Not posts found", 404);
-    return posts;
+      }),
+      reqQuery
+    ).paginate(documentCount);
+    const { dbQuery, paginationResult } = feature;
+    const posts = (await dbQuery) as Array<PostSanitize>;
+    if (!posts || !posts.length) throw new ApiError("Not posts found", 404);
+    for (let post in posts) {
+      const comments = await prisma.comment.count({where: {postId: posts[post].id}});
+      const likes = await prisma.like.count({where: {postId: posts[post].id}});
+      posts[post].totalComments = comments;
+      posts[post].totalLikes = likes
+    }
+    return { paginationResult, posts };
   }
   // get specific post
-  async getSpecificPost(getSpecificPostBody: getSpecificPostBody): Promise<PostSanitize> {
+  async getSpecificPost(getSpecificPostBody: GetSpecificPostBody): Promise<PostSanitize> {
     const { postId, loggedUserId } = getSpecificPostBody;
     const followingList = await prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
@@ -131,13 +161,18 @@ class PostServices {
     return this.sanitizeData.post(post);
   }
   // get logged user posts
-  async getLoggedUserPosts (loggedUserId: number): Promise<Array<PostSanitize>> {
-    const posts = (await prisma.post.findMany({
-      where: { postAuthorId: loggedUserId },
-      include: { postAuthor: { select: { name: true, id: true } } },
-    })) as Array<PostSanitize>;
-    if (!posts || !posts.length) throw new ApiError('No posts found', 404);
-    return posts;
+  async getLoggedUserPosts(loggedUserId: number, reqQuery: ReqQuery): Promise<GetPostsApiFeatures> {
+    const feature = new ApiFeatures(
+      prisma.post.findMany({
+        where: { postAuthorId: loggedUserId },
+        include: { postAuthor: { select: { name: true, id: true } } },
+      }),
+      reqQuery
+    );
+    const { dbQuery, paginationResult } = feature;
+    const posts = await dbQuery;
+    if (!posts || !posts.length) throw new ApiError("No posts found", 404);
+    return { paginationResult, posts };
   }
   // delete specific post
   async deleteSpecificPost(id: number, authorId: number): Promise<string> {

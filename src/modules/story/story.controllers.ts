@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import StoryServices from "./story.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
 import { CreateStoryBody, DeleteStoryBody, UpdateStoryPrivacyBody } from "./story.interfaces";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 
 class StoryControllers {
   private storyServices: StoryServices;

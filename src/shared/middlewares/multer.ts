@@ -1,7 +1,7 @@
 import multer from 'multer';
 import { Request } from 'express';
 
-import ApiError from './../../utils/api.error';
+import ApiError from "../utils/api.error";
 
 const multerOpts = () => {
   const storage = multer.diskStorage({

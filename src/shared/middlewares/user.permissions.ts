@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import { AuthorizationRequest } from '../../modules/auth/auth.interfaces';
-import ApiError from './../../utils/api.error';
+import ApiError from "../utils/api.error";
 
 export const allowTo = ([... roles] : string[]) => {
   return asyncHandler(async (req: AuthorizationRequest, res, next) => {

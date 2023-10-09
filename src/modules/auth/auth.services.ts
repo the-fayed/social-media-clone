@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-import SanitizeData from "./../../utils/sanitize.data";
+import SanitizeData from "../../shared/utils/sanitize.data";
 import { ILogin, LoginBody, LoginSanitize, SignupBody, SignupSanitize } from "./auth.interfaces";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 import { sendEmail } from "./../../shared/services/send.email";
 import { passwordResetCode, verifyEmail } from "./../../shared/email.templates";
 import { generateEmailVerificationToken, generatePasswordRestToken } from "./../../shared/services/code.factor";

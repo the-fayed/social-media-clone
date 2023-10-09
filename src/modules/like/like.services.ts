@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { LikeData, LikeSanitize } from "./like.interfaces";
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 
 const prisma = new PrismaClient();
 

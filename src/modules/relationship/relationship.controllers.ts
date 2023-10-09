@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 
-import ApiError from "./../../utils/api.error";
+import ApiError from "../../shared/utils/api.error";
 import RelationshipServices from "./relationship.services";
 import { AuthorizationRequest } from "./../../modules/auth/auth.interfaces";
 import { FollowOrUnFollowUserBody } from "./relationship.interfaces";
@@ -33,9 +33,9 @@ class RelationshipControllers {
    */
   getLoggedUserFollowers = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
     const userId = Number(req.user.id);
-    const followers = await this.relationshipServices.getLoggedUserFollowers(userId);
-    if (!followers) return next(new ApiError("Can not get your followers list at the moment", 500));
-    res.status(200).json({ status: "success", data: followers });
+    const results = await this.relationshipServices.getLoggedUserFollowers(userId, req.query);
+    if (!results) return next(new ApiError("Can not get your followers list at the moment", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.followers });
   });
 
   /**
@@ -45,9 +45,9 @@ class RelationshipControllers {
    */
   getLoggedUserFollowing = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
     const userId = Number(req.user.id);
-    const following = await this.relationshipServices.getLoggedUserFollowing(userId);
-    if (!following) return next(new ApiError("Can not get your followers list at the moment", 500));
-    res.status(200).json({ status: "success", data: following });
+    const results = await this.relationshipServices.getLoggedUserFollowing(userId, req.query);
+    if (!results) return next(new ApiError("Can not get your followers list at the moment", 500));
+    res.status(200).json({ status: "success", paginationResult: results.paginationResult, data: results.following });
   });
 }
 
