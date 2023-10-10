@@ -33,10 +33,6 @@ model User {
   stories                Story[]
   followers              Relationship[] @relation(name: "followers")
   following              Relationship[] @relation(name: "followed")
-  conversaionsSent       Conversation[] @relation(name: "sender")
-  conversaionsReceived   Conversation[] @relation(name: "receiver")
-  messageSent            Message[]      @relation(name: "sender")
-  messageRecived         Message[]      @relation(name: "receiver")
 }
 
 model Profile {
@@ -96,27 +92,6 @@ model Relationship {
   followers      User @relation(name: "followers", fields: [followerId], references: [id])
 }
 
-model Conversation {
-  id          Int       @id @default(autoincrement())
-  senderId    Int
-  sender      User      @relation(name: "sender", fields: [senderId], references: [id])
-  receiverId  Int
-  receiver    User      @relation(name: "receiver", fields: [receiverId], references: [id])
-  messages    Message[]
-  createdAt   DateTime  @default(now())
-}
-
-model Message {
-  id              Int          @id @default(autoincrement())
-  message         String
-  conversationId  Int
-  conversaion     Conversation @relation(fields: [conversationId], references: [id])
-  senderId        Int
-  sender          User         @relation(name: "sender", fields: [senderId], references: [id])
-  receiverId      Int
-  receiver        User         @relation(name: "receiver", fields: [receiverId], references: [id])
-  sentAt          DateTime     @default(now())
-}
 
 enum Roles {
   User

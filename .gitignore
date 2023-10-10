@@ -1,7 +1,7 @@
-server/node_modules
+node_modules
 # Keep environment variables out of version control
-server/.env
+.env
 
-server/prisma/migrations
+prisma/migrations
 
 .vscode
