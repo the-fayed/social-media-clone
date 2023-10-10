@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     Int            @id @default(autoincrement())
+  name                   String
+  username               String         @unique
+  email                  String         @unique
+  password               String
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  isActive               Boolean        @default(true)
+  role                   Roles          @default(User)
+  emailVerified          Boolean        @default(false)
+  emailVerificationToken String?        @unique
+  passResetToken         String?
+  passResetTokenExpire   String?
+  passResetCodeVerified  Boolean?
+  passChangedAt          String?
+  profile                Profile?
+  posts                  Post[]
+  comments               Comment[]
+  likes                  Like[]
+  stories                Story[]
+  followers              Relationship[] @relation(name: "followers")
+  following              Relationship[] @relation(name: "followed")
+  conversaionsSent       Conversation[] @relation(name: "sender")
+  conversaionsReceived   Conversation[] @relation(name: "receiver")
+  messageSent            Message[]      @relation(name: "sender")
+  messageRecived         Message[]      @relation(name: "receiver")
+}
+
+model Profile {
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  user    User    @relation(fields: [userId], references: [id])
+  avatar  String?
+  city    String
+  website String?
+}
+
+model Post {
+  id            Int                 @id @default(autoincrement())
+  desc          String
+  image         String?
+  postAuthorId  Int
+  postAuthor    User                @relation(fields: [postAuthorId], references: [id])
+  createdAt     DateTime            @default(now())
+  updatedUt     DateTime            @updatedAt
+  privacy       Privacy             @default(public)
+  comments      Comment[]
+  totalComments Int?
+  Likes         Like[]
+  totalLikes    Int?
+}
+
+model Comment {
+  id              Int    @id @default(autoincrement())
+  desc            String
+  postId          Int
+  post            Post   @relation(fields: [postId], references: [id])
+  commentAuthorId Int
+  commentAuthor   User   @relation(fields: [commentAuthorId], references: [id])
+}
+
+model Like {
+  id         Int  @id @default(autoincrement())
+  postId     Int
+  post       Post @relation(fields: [postId], references: [id])
+  likeUserId Int
+  likeUser   User @relation(fields: [likeUserId], references: [id])
+}
+
+model Story {
+  id             Int                 @id @default(autoincrement())
+  image          String
+  storyAuthorId  Int
+  storyAuthor    User                @relation(fields: [storyAuthorId], references: [id])
+  privacy        Privacy             @default(public)
+}
+
+model Relationship {
+  id             Int  @id @default(autoincrement())
+  followedUserId Int
+  followerId     Int  @unique
+  followedUser   User @relation(name: "followed", fields: [followedUserId], references: [id])
+  followers      User @relation(name: "followers", fields: [followerId], references: [id])
+}
+
+model Conversation {
+  id          Int       @id @default(autoincrement())
+  senderId    Int
+  sender      User      @relation(name: "sender", fields: [senderId], references: [id])
+  receiverId  Int
+  receiver    User      @relation(name: "receiver", fields: [receiverId], references: [id])
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+}
+
+model Message {
+  id              Int          @id @default(autoincrement())
+  message         String
+  conversationId  Int
+  conversaion     Conversation @relation(fields: [conversationId], references: [id])
+  senderId        Int
+  sender          User         @relation(name: "sender", fields: [senderId], references: [id])
+  receiverId      Int
+  receiver        User         @relation(name: "receiver", fields: [receiverId], references: [id])
+  sentAt          DateTime     @default(now())
+}
+
+enum Roles {
+  User
+  Admin
+}
+
+enum Privacy {
+  public
+  followers
+  noone
+}
