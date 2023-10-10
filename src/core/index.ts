@@ -1,7 +1,6 @@
 import express from "express";
 import * as dotenv from "dotenv";
 import morgan from "morgan";
-import { Server } from 'socket.io';
 
 dotenv.config();
 const app = express();
@@ -25,10 +24,7 @@ import likeRoutes from "../modules/like/like.routes";
 import relationshipRoutes from "../modules/relationship/relationship.routes";
 // Story routes
 import storyRoutes from "../modules/story/story.routes";
-// Conversation routes
-import conversationRoutes from "../modules/conversation/conversation.routes";
-// Message routes
-import messageRoutes from '../modules/message/message.routes';
+
 
 // Public middlewares
 app.use(express.json());
@@ -48,8 +44,6 @@ app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/relationships", relationshipRoutes);
 app.use("/api/v1/stories", storyRoutes);
-app.use("/api/v1/conversations", conversationRoutes);
-app.use('/api/v1/messages', messageRoutes);
 
 // Unhandled routes
 app.use("*", (req, res, next) => {
@@ -67,11 +61,6 @@ const server = app.listen(port, () => {
   console.log(`Server is running on ${port}`);
 });
 
-const io = new Server(server);
-
-io.on('connection', (socket) => {
-  console.log(`${socket.id} connected`);
-})
 
 // Handle unhandled rejection errors
 process.on("unhandledRejection", (error: Error) => {
