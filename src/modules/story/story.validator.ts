@@ -5,7 +5,7 @@ import { validatorMiddleware } from "./../../shared/middlewares/validator";
 const prisma = new PrismaClient();
 
 export const createStoryValidator = [
-  check("image").notEmpty().withMessage("Story image is required").isURL().withMessage("Invalid image"),
+  check("image").notEmpty().withMessage("Story image is required"),
   check("privacy")
     .optional()
     .custom((value: string) => {
@@ -57,4 +57,5 @@ export const deleteStoryValidator = [
       const story = await prisma.story.findUnique({ where: { id: Number(value), storyAuthorId: Number(req.user.id) } });
       if (!story) throw new Error("Story not found");
     }),
+    validatorMiddleware
 ];

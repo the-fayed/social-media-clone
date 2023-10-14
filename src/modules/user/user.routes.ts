@@ -27,13 +27,14 @@ router.get("/search", protect, allowTo(["User"]), userControllers.searchForUsers
 
 router.use(protect, allowTo(["Admin", "User"]));
 router
-  .post(
+  .put(
     "/update/loggedUserData",
     uploadSingleImage("avatar"),
     updateLoggedUserDataValidator,
     userControllers.updateLoggedUserData
   )
-  .post("/update/loggedUserPassword", updateLoggedUserPasswordValidator, userControllers.updateLoggedUserPassword);
+  .put("/update/loggedUserPassword", updateLoggedUserPasswordValidator, userControllers.updateLoggedUserPassword)
+  .delete("/deleteLoggedUser", userControllers.deleteLoggedUser);
 
 router.use(protect, allowTo(["Admin"]));
 router

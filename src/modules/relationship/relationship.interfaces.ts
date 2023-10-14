@@ -1,8 +1,8 @@
 import { Paginate } from "./../../shared/utils/api.features/api.features.interfaces";
 
 export interface FollowOrUnFollowUserBody {
-  follower: number | undefined;
-  following: number | undefined;
+  followerId: number | undefined;
+  followingId: number | undefined;
 }
 
 export interface SanitizeFollowers {

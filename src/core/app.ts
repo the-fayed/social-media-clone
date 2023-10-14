@@ -1,12 +1,9 @@
 import express from "express";
-import * as dotenv from "dotenv";
 import morgan from "morgan";
 
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 5002;
 
-import globalErrorHandler from "./../shared/middlewares/error.handling";
+import globalErrorHandler from "../shared/middlewares/error.handling";
 import ApiError from "../shared/utils/api.error";
 
 // Importing routes
@@ -57,16 +54,4 @@ app.use("/", (req, res, next) => {
   res.send("Social Media Clone");
 });
 
-const server = app.listen(port, () => {
-  console.log(`Server is running on ${port}`);
-});
-
-
-// Handle unhandled rejection errors
-process.on("unhandledRejection", (error: Error) => {
-  console.error(`Unhandled Rejection Error >>> ${error.name} >>> ${error.message}`);
-  server.close(() => {
-    console.error("Shutting down ... ");
-    process.exit(1);
-  });
-});
+export default app;

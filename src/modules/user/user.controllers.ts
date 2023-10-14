@@ -129,6 +129,17 @@ class UserControllers {
     if (!result) return next(new ApiError("Can not delete this user at time", 500));
     res.status(200).json({ status: "success", message: result });
   });
+
+  /**
+   *  @desc   Delete logged user
+   *  @route  DELETE /api/v1/users/deleteLoggedUser
+   *  @access Privet (User)
+   */
+  deleteLoggedUser = asyncHandler(async (req:AuthorizationRequest, res, next): Promise<void> => {
+    const result = await this.userServices.deleteSpecificUser(Number(req.user.id));
+    if (!result) return next(new ApiError("Can not delete this user at time", 500));
+    res.status(200).json({ status: "success", message: result });
+  });
 };
 
 export default UserControllers;

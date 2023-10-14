@@ -8,5 +8,6 @@
     "baseUrl": "src",
     "sourceMap": true,
     "noImplicitAny": true,
+    "esModuleInterop": true
   }
 }

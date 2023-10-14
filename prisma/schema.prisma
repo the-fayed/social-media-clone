@@ -31,8 +31,8 @@ model User {
   comments               Comment[]
   likes                  Like[]
   stories                Story[]
-  followers              Relationship[] @relation(name: "followers")
-  following              Relationship[] @relation(name: "followed")
+  followers              Relationship[] @relation(name: "followed")
+  following              Relationship[] @relation(name: "follower")
 }
 
 model Profile {
@@ -85,11 +85,11 @@ model Story {
 }
 
 model Relationship {
-  id             Int  @id @default(autoincrement())
-  followedUserId Int
-  followerId     Int  @unique
-  followedUser   User @relation(name: "followed", fields: [followedUserId], references: [id])
-  followers      User @relation(name: "followers", fields: [followerId], references: [id])
+  id             Int @id @default(autoincrement()) @unique
+  followedId     Int
+  followerId     Int
+  followed       User @relation(name: "followed", fields: [followedId], references: [id])
+  follower       User @relation(name: "follower", fields: [followerId], references: [id])
 }
 
 

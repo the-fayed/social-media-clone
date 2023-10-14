@@ -93,7 +93,7 @@ class PostServices {
     }
     const followingList = await this.prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
-    followingListIds = followingList?.map((item) => item.followedUserId) ?? [];
+    followingListIds = followingList?.map((item) => item.followedId) ?? [];
     const documentCount = await this.prisma.post.count({
       where: {
         OR: [
@@ -139,7 +139,7 @@ class PostServices {
     const { postId, loggedUserId } = getSpecificPostBody;
     const followingList = await this.prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
-    followingListIds = followingList?.map((item) => item.followedUserId) ?? [];
+    followingListIds = followingList?.map((item) => item.followedId) ?? [];
     const post = (await this.prisma.post.findFirst({
       where: {
         OR: [

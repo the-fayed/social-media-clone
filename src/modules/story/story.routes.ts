@@ -20,7 +20,7 @@ router.get("/loggedUser", storyControllers.getLoggedUserStories);
 
 router
   .route("/")
-  .post(uploadSingleImage("image"), createStoryValidator, storyControllers.createNewStory)
+  .post(uploadSingleImage("image"), storyControllers.createNewStory)
   .get(storyControllers.getAllStories);
 
 router

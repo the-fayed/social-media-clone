@@ -1,6 +1,7 @@
 import { check } from "express-validator";
 import { PrismaClient } from "@prisma/client";
 import { validatorMiddleware } from "./../../shared/middlewares/validator";
+import ApiError from './../../shared/utils/api.error';
 
 const prisma = new PrismaClient();
 
@@ -61,7 +62,7 @@ export const loginValidator = [
     .withMessage("Invalid Email address")
     .custom(async (value: string) => {
       const exist = await prisma.user.findUnique({ where: { email: value } });
-      if (!exist) throw new Error("Invalid email or password");
+      if (!exist) throw new Error("No such email");
     }),
   check("password")
     .notEmpty()

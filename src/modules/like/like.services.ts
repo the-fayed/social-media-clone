@@ -32,7 +32,7 @@ class LikeServices {
       where: { postId: postId },
       select: { postId: true, likeUser: { select: { name: true, id: true } } },
     })) as Array<LikeSanitize>;
-    if (!likes) throw new ApiError("No likes on this post yet", 404);
+    if (!likes || !likes.length) throw new ApiError("No likes on this post yet", 404);
     return likes;
   }
 }

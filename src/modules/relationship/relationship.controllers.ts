@@ -18,8 +18,8 @@ class RelationshipControllers {
    */
   followOrUnFollowUser = asyncHandler(async (req: AuthorizationRequest, res, next): Promise<void> => {
     const followOrUnFollowUserBody: FollowOrUnFollowUserBody = {
-      follower: Number(req.user.id),
-      following: Number(req.params.userId),
+      followerId: Number(req.user.id),
+      followingId: Number(req.params.userId),
     };
     const result = await this.relationshipServices.followOrUnFollowUser(followOrUnFollowUserBody);
     if (!result) return next(new ApiError("You can not follow or un follow this user at the moment", 500));

@@ -53,7 +53,7 @@ class UserServices {
   // get all users
   async getAllUsers(): Promise<Array<GetUser>> {
     const users = (await this.prisma.user.findMany()) as Array<GetUser>;
-    if (!users) throw new ApiError("No users where found", 404);
+    if (!users || !users.length) throw new ApiError("No users where found", 404);
     return users;
   }
   // get single user by id
@@ -110,7 +110,7 @@ class UserServices {
   // delete user
   async deleteSpecificUser(id: number): Promise<string> {
     const user = await this.prisma.user.update({ where: { id: id }, data: { isActive: false } });
-    if (!user || !user.isActive) throw new ApiError("User not found!", 404);
+    if (!user) throw new ApiError("User not found!", 404);
     return "User has been deleted successfully";
   }
   // update logged user Password

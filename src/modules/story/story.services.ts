@@ -43,7 +43,7 @@ class StoryServices {
   async getAllStories(loggedUserId: number, reqQuery: ReqQuery): Promise<GetStoriesApiFeature> {
     const followingList = await this.prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
-    followingListIds = followingList?.map((item) => item.followedUserId) ?? [];
+    followingListIds = followingList?.map((item) => item.followedId) ?? [];
     const documentCount = await this.prisma.story.count({
       where: {
         OR: [
@@ -77,7 +77,7 @@ class StoryServices {
   async getSpecificStory(id: number, loggedUserId: number): Promise<StorySanitize> {
     const followingList = await this.prisma.relationship.findMany({ where: { followerId: loggedUserId } });
     let followingListIds: Array<number>;
-    followingListIds = followingList?.map((item) => item.followedUserId) ?? [];
+    followingListIds = followingList?.map((item) => item.followedId) ?? [];
     const story = (await this.prisma.story.findFirst({
       where: {
         OR: [

@@ -41,10 +41,8 @@ class AuthController {
       email: req.body.email,
       password: req.body.password,
     };
-    const result: string | LoginSanitize = await this.authService.login(loginBody);
-    if (!result || typeof result === "string") {
-      return next(new ApiError(typeof result === "string" ? result : `Invalid credentials`, 403));
-    }
+    const result = await this.authService.login(loginBody);
+    if (!result) return next(new ApiError(`Invalid credentials`, 401));
     const accessToken = generateAccessToken(result.id);
     res.status(200).json({ status: "success", data: result, accessToken });
   });

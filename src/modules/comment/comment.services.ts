@@ -51,7 +51,7 @@ class CommentServices {
     );
     const { dbQuery, paginationResult } = feature;
     const comments = await dbQuery;
-    if (!comments) throw new ApiError("There is no comments on this post", 404);
+    if (!comments || !comments.length) throw new ApiError("There is no comments on this post", 404);
     return { paginationResult, comments };
   }
   // get specific comment
