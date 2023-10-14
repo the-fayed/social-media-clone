@@ -1,5 +1,7 @@
 import express from "express";
 import morgan from "morgan";
+import compression from 'compression';
+import cors from 'cors';
 
 const app = express();
 
@@ -24,6 +26,9 @@ import storyRoutes from "../modules/story/story.routes";
 
 
 // Public middlewares
+app.use(cors());
+app.options('*', cors());
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
