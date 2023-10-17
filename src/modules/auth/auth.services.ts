@@ -50,7 +50,7 @@ class AuthService {
       return "A verification email has been sent to your email address, please verify your email to login";
   };
   // log in
-  login = async (loginBody: LoginBody): Promise<LoginSanitize> => {
+  async login (loginBody: LoginBody): Promise<LoginSanitize> {
       const { email, password } = loginBody;
       const user = (await this.prisma.user.findUnique({ where: { email: email } })) as ILogin;
       if (!user || !bcrypt.compareSync(password, user.password)) throw new ApiError("Invalid email or password", 401);
