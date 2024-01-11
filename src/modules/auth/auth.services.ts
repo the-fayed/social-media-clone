@@ -21,6 +21,7 @@ class AuthService {
 
     const { email, name, username, password, city, website } = signupBody;
       let { avatar } = signupBody;
+      console.log(avatar);
       if (avatar) {
         const avatarResult = await cloudinary.uploader.upload(avatar, {
           folder: "uploads/user/avatar",
