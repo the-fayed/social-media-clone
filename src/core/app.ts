@@ -1,42 +1,43 @@
+const sanitizer = require("express-sanitizer");
+import compression from "compression";
 import express from "express";
 import morgan from "morgan";
-import compression from 'compression';
-import cors from 'cors';
-import hpp from 'hpp';
-const sanitizer = require('express-sanitizer');
-
-const app = express();
+import cors from "cors";
+import hpp from "hpp";
 
 import globalErrorHandler from "../shared/middlewares/error.handling";
+import { limiter } from "../shared/middlewares/rate.limiter";
+import { routesMounter } from "../modules/routes";
 import ApiError from "../shared/utils/api.error";
 
-// Importing routes
-// User routes
-import userRoutes from "../modules/user/user.routes";
-// Auth routes
-import authRoutes from "../modules/auth/auth.routes";
-// Post routes
-import postRoutes from "../modules/post/post.routes";
-// Comment routes
-import commentRoutes from "../modules/comment/comment.routes";
-// Like routes
-import likeRoutes from "../modules/like/like.routes";
-// Relationship routes
-import relationshipRoutes from "../modules/relationship/relationship.routes";
-// Story routes
-import storyRoutes from "../modules/story/story.routes";
-
+const app: express.Application = express();
 
 // Public middlewares
-app.use(cors());
-app.options('*', cors());
-app.use(compression());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
+// applying cors
+app.use(cors());
+app.options("*", cors());
+
+// applying compression
+app.use(compression());
+
+// applying rate limiter
+app.use(limiter);
+
+app.use(express.json({ limit: "30kb" }));
+app.use(express.urlencoded({ extended: true, limit: "30kb" }));
+
+// applying hpp
 app.use(hpp());
 
-app.use(sanitizer());
+// applying sanitizer
+app.use(
+  sanitizer({
+    sql: true,
+    xss: true,
+    level: 5,
+  })
+);
 
 // Logging in development mode
 if (process.env.MODE === "Development") {
@@ -44,14 +45,7 @@ if (process.env.MODE === "Development") {
   console.log(`Mode: ${process.env.MODE}`);
 }
 
-// Mount routes
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/posts", postRoutes);
-app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/likes", likeRoutes);
-app.use("/api/v1/relationships", relationshipRoutes);
-app.use("/api/v1/stories", storyRoutes);
+routesMounter(app);
 
 // Unhandled routes
 app.use("*", (req, res, next) => {
