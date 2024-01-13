@@ -2,6 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import compression from 'compression';
 import cors from 'cors';
+import hpp from 'hpp';
+const sanitizer = require('express-sanitizer');
 
 const app = express();
 
@@ -31,6 +33,10 @@ app.options('*', cors());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(hpp());
+
+app.use(sanitizer());
 
 // Logging in development mode
 if (process.env.MODE === "Development") {
